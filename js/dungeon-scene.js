@@ -1,6 +1,6 @@
-import Player from "player.js";
-import TILES from "tile-mapping.js";
-import TilemapVisibility from "tilemap-visibility.js";
+import Player from "./player.js";
+import TILES from "./tile-mapping.js";
+import TilemapVisibility from "./tilemap-visibility.js";
 
 /**
  * Scene that generates a new dungeon
@@ -12,10 +12,10 @@ export default class DungeonScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("tiles", "Phaser-game/assets/tilesets/buch-tileset-48px-extruded.png");
+    this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded.png");
     this.load.spritesheet(
       "characters",
-      "Phaser-game/assets/spritesheets/buch-characters-64px-extruded.png",
+      "./assets/spritesheets/buch-characters-64px-extruded.png",
       {
         frameWidth: 64,
         frameHeight: 64,
@@ -75,6 +75,12 @@ export default class DungeonScene extends Phaser.Scene {
       this.groundLayer.putTileAt(TILES.WALL.BOTTOM_LEFT, left, bottom);
 
       // Fill the walls with mostly clean tiles, but occasionally place a dirty tile
+      /*      
+      this.groundLayer.fill(39, left + 1, top, width - 2, 1); // Top
+      this.groundLayer.fill(1, left + 1, bottom, width - 2, 1); // Bottom
+      this.groundLayer.fill(21, left, top + 1, 1, height - 2); // Left
+      this.groundLayer.fill(19, right, top + 1, 1, height - 2); // Right
+      */
       this.groundLayer.weightedRandomize(left + 1, top, width - 2, 1, TILES.WALL.TOP);
       this.groundLayer.weightedRandomize(left + 1, bottom, width - 2, 1, TILES.WALL.BOTTOM);
       this.groundLayer.weightedRandomize(left, top + 1, 1, height - 2, TILES.WALL.LEFT);
