@@ -1,6 +1,6 @@
 import Player from "./player.js";
-import FollowEnemy from "./enemis.js";
-
+import {FollowEnemy} from "./enemis.js";
+import {BouncingEnemy} from "./enemis.js";
 import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 
@@ -43,7 +43,7 @@ export default class DungeonScene extends Phaser.Scene {
       }
     });
 
-    this.dungeon.drawToConsole();
+    //this.dungeon.drawToConsole();
 
     // Creating a blank tilemap with dimensions matching the dungeon
     const map = this.make.tilemap({
@@ -111,6 +111,12 @@ export default class DungeonScene extends Phaser.Scene {
     const endRoom = Phaser.Utils.Array.RemoveRandomElement(rooms);
     const otherRooms = Phaser.Utils.Array.Shuffle(rooms).slice(0, rooms.length * 0.9);
 
+    // Place the player in the first room
+    const playerRoom = startRoom;
+    const x = map.tileToWorldX(playerRoom.centerX);
+    const y = map.tileToWorldY(playerRoom.centerY);
+    this.player = new Player(this, x, y);
+
     // Place the stairs
     this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
 
@@ -137,6 +143,32 @@ export default class DungeonScene extends Phaser.Scene {
           this.stuffLayer.putTilesAt(TILES.TOWER, room.centerX + 1, room.centerY - 1);
         }
       }
+      var rand = Math.random();
+      if (rand <= 0.5) {
+        const x = map.tileToWorldX(room.centerX);
+        const y = map.tileToWorldY(room.centerY);
+        room.enemis = [];
+        var enemy = new FollowEnemy(this,x,y,10);
+
+        this.physics.add.collider(enemy.sprite, this.groundLayer);
+        this.physics.add.collider(enemy.sprite, this.stuffLayer);
+        //this.physics.add.collider(enemy.sprite, this.player.sprite);
+
+        room.enemis.push(enemy);
+      }
+      else
+      {
+        const x = map.tileToWorldX(room.centerX);
+        const y = map.tileToWorldY(room.centerY);
+        room.enemis = [];
+        var enemy = new BouncingEnemy(this,x,y,50);
+
+        this.physics.add.collider(enemy.sprite, this.groundLayer);
+        this.physics.add.collider(enemy.sprite, this.stuffLayer);
+        //this.physics.add.collider(enemy.sprite, this.player.sprite);
+
+        room.enemis.push(enemy);
+      }
     });
 
     // Not exactly correct for the tileset since there are more possible floor tiles, but this will
@@ -156,17 +188,10 @@ export default class DungeonScene extends Phaser.Scene {
       });
     });
 
-    // Place the player in the first room
-    const playerRoom = startRoom;
-    const x = map.tileToWorldX(playerRoom.centerX);
-    const y = map.tileToWorldY(playerRoom.centerY);
-    this.player = new Player(this, x, y);
-    this.enemy = new FollowEnemy(this,x,y,10);
-    this.physics.add.collider(this.player.sprite, this.enemy.sprite);
+    //this.physics.add.collider(this.player.sprite, this.enemy.sprite);
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.player.sprite, this.groundLayer);
     this.physics.add.collider(this.player.sprite, this.stuffLayer);
-
     // Phaser supports multiple cameras, but you can access the default camera like this:
     const camera = this.cameras.main;
 
@@ -189,14 +214,32 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.hasPlayerReachedStairs) return;
 
     this.player.update();
-    //this.enemy.update();
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
     const playerTileX = this.groundLayer.worldToTileX(this.player.sprite.x);
     const playerTileY = this.groundLayer.worldToTileY(this.player.sprite.y);
-    const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+    if(this.playerRoom != this.dungeon.getRoomAt(playerTileX, playerTileY))
+    {
+      if(this.playerRoom!=undefined && this.playerRoom.enemis != undefined)
+      {
+        this.playerRoom.enemis.forEach(enemy => {
+          //enemy.sprite.body.setVelocity(0);
+          //enemy.sprite.alpha = 0;
+          enemy.sprite.disableBody(true, true);
+        });
+      }
+    }
 
-    this.tilemapVisibility.setActiveRoom(playerRoom);
+    this.playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+
+    if(this.playerRoom.enemis != undefined)
+    {
+      this.playerRoom.enemis.forEach(enemy => {
+        enemy.sprite.enableBody(false,0,0,true,true);
+        enemy.update();
+      });
+    }
+    this.tilemapVisibility.setActiveRoom(this.playerRoom);
 
   }
 }

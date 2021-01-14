@@ -4,25 +4,23 @@ class Enemy {
 
     const anims = scene.anims;
     anims.create({
-      key: "player-walk",
-      frames: anims.generateFrameNumbers("characters", { start: 46, end: 49 }),
+      key: "enemy-walk",
+      frames: anims.generateFrameNumbers("characters", { start: 15, end: 17 }),
       frameRate: 8,
       repeat: -1
     });
     anims.create({
-      key: "player-walk-back",
-      frames: anims.generateFrameNumbers("characters", { start: 65, end: 68 }),
+      key: "enemy-walk-back",
+      frames: anims.generateFrameNumbers("characters", { start: 39, end: 41 }),
       frameRate: 8,
       repeat: -1
     });
 
-    this.sprite = scene.physics.add
-      .sprite(x, y, "characters", 0)
-      .setSize(22, 33)
-      .setOffset(23, 27);
+    this.sprite = scene.physics.add.sprite(x, y, "characters", 4);
+    //this.sprite.alpha = 0;
+    this.sprite.disableBody(true, true);
 
-
-    this.sprite.anims.play("player-walk-back");
+    this.sprite.anims.play("enemy-walk-back");
 
     this.keys = scene.input.keyboard.createCursorKeys();
   }
@@ -40,7 +38,7 @@ class Enemy {
   }
 }
 
-export default class FollowEnemy extends Enemy
+export class FollowEnemy extends Enemy
 {
   constructor(scene,x,y,speed)
   {
@@ -52,7 +50,6 @@ export default class FollowEnemy extends Enemy
     // Stop any previous movement from the last frame
     //this.sprite.body.setVelocity(0);
 
-    
     // Horizontal movement
     if (this.scene.player.sprite.x < this.sprite.x) {
       this.sprite.body.setVelocityX(-1*this.speed);
@@ -81,5 +78,20 @@ export default class FollowEnemy extends Enemy
       this.sprite.body.setVelocityY(0);
     }
 
+  }
+}
+
+
+export class BouncingEnemy extends Enemy
+{
+  constructor(scene,x,y,speed)
+  {
+    super(scene,x,y);
+    this.speed = speed;
+    this.sprite.body.velocity.setTo(speed, speed);
+    this.sprite.body.bounce.set(1);
+  }
+  update()
+  {
   }
 }

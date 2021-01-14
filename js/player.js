@@ -81,7 +81,7 @@ export default class Player {
       {
         sprite.setTexture("characters", 37);
       }
-      if(this.lastKey == keys.left || this.lastKey == keys.right)
+      else if(this.lastKey == keys.left || this.lastKey == keys.right)
       {
         sprite.setTexture("characters", 13);
       }
