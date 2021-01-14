@@ -1,4 +1,6 @@
 import Player from "./player.js";
+import FollowEnemy from "./enemis.js";
+
 import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
 
@@ -15,12 +17,10 @@ export default class DungeonScene extends Phaser.Scene {
     this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded.png");
     this.load.spritesheet(
       "characters",
-      "./assets/spritesheets/buch-characters-64px-extruded.png",
+     "./assets/character_set_1.png", //"./assets/spritesheets/buch-characters-64px-extruded.png"
       {
-        frameWidth: 64,
-        frameHeight: 64,
-        margin: 1,
-        spacing: 2
+        frameWidth: 32,
+        frameHeight: 32,
       }
     );
   }
@@ -161,7 +161,8 @@ export default class DungeonScene extends Phaser.Scene {
     const x = map.tileToWorldX(playerRoom.centerX);
     const y = map.tileToWorldY(playerRoom.centerY);
     this.player = new Player(this, x, y);
-
+    this.enemy = new FollowEnemy(this,x,y,10);
+    this.physics.add.collider(this.player.sprite, this.enemy.sprite);
     // Watch the player and tilemap layers for collisions, for the duration of the scene:
     this.physics.add.collider(this.player.sprite, this.groundLayer);
     this.physics.add.collider(this.player.sprite, this.stuffLayer);
@@ -188,7 +189,7 @@ export default class DungeonScene extends Phaser.Scene {
     if (this.hasPlayerReachedStairs) return;
 
     this.player.update();
-
+    //this.enemy.update();
     // Find the player's room using another helper method from the dungeon that converts from
     // dungeon XY (in grid units) to the corresponding room object
     const playerTileX = this.groundLayer.worldToTileX(this.player.sprite.x);
@@ -196,5 +197,6 @@ export default class DungeonScene extends Phaser.Scene {
     const playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
 
     this.tilemapVisibility.setActiveRoom(playerRoom);
+
   }
 }

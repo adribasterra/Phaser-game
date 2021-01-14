@@ -5,24 +5,29 @@ export default class Player {
     const anims = scene.anims;
     anims.create({
       key: "player-walk",
-      frames: anims.generateFrameNumbers("characters", { start: 46, end: 49 }),
+      frames: anims.generateFrameNumbers("characters", { start: 12, end: 14 }),
       frameRate: 8,
       repeat: -1
     });
     anims.create({
       key: "player-walk-back",
-      frames: anims.generateFrameNumbers("characters", { start: 65, end: 68 }),
+      frames: anims.generateFrameNumbers("characters", { start: 36, end: 38 }),
+      frameRate: 8,
+      repeat: -1
+    });
+    anims.create({
+      key: "player-walk-forward",
+      frames: anims.generateFrameNumbers("characters", { start: 0, end: 2 }),
       frameRate: 8,
       repeat: -1
     });
 
-    this.sprite = scene.physics.add
-      .sprite(x, y, "characters", 0)
-      .setSize(22, 33)
-      .setOffset(23, 27);
+        this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
 
     this.sprite.anims.play("player-walk-back");
 
+    this.sprite.body.immovable = true;
+    
     this.keys = scene.input.keyboard.createCursorKeys();
   }
 
@@ -35,23 +40,26 @@ export default class Player {
     const sprite = this.sprite;
     const speed = 300;
     const prevVelocity = sprite.body.velocity.clone();
-
     // Stop any previous movement from the last frame
     sprite.body.setVelocity(0);
 
     // Horizontal movement
     if (keys.left.isDown) {
+          this.lastKey = keys.left;
       sprite.body.setVelocityX(-speed);
-      sprite.setFlipX(true);
-    } else if (keys.right.isDown) {
-      sprite.body.setVelocityX(speed);
       sprite.setFlipX(false);
+    } else if (keys.right.isDown) {
+          this.lastKey = keys.right;
+      sprite.body.setVelocityX(speed);
+      sprite.setFlipX(true);
     }
 
     // Vertical movement
     if (keys.up.isDown) {
+          this.lastKey = keys.up;
       sprite.body.setVelocityY(-speed);
     } else if (keys.down.isDown) {
+          this.lastKey = keys.down;
       sprite.body.setVelocityY(speed);
     }
 
@@ -59,16 +67,28 @@ export default class Player {
     sprite.body.velocity.normalize().scale(speed);
 
     // Update the animation last and give left/right animations precedence over up/down animations
-    if (keys.left.isDown || keys.right.isDown || keys.down.isDown) {
+    if (keys.left.isDown || keys.right.isDown) {
       sprite.anims.play("player-walk", true);
     } else if (keys.up.isDown) {
       sprite.anims.play("player-walk-back", true);
-    } else {
+    } else if(keys.down.isDown) {
+      sprite.anims.play("player-walk-forward", true);
+    }else {
       sprite.anims.stop();
 
       // If we were moving, pick and idle frame to use
-      if (prevVelocity.y < 0) sprite.setTexture("characters", 65);
-      else sprite.setTexture("characters", 46);
+      if (this.lastKey == keys.up) 
+      {
+        sprite.setTexture("characters", 37);
+      }
+      if(this.lastKey == keys.left || this.lastKey == keys.right)
+      {
+        sprite.setTexture("characters", 13);
+      }
+      else 
+      {
+          sprite.setTexture("characters", 1);
+      }
     }
   }
 
