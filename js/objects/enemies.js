@@ -4,7 +4,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
     constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture, frame);
         this.scene = scene;
-
+        
         this.sprite = scene.physics.add.sprite(x, y, "characters", 4);
         //this.sprite.alpha = 0;
         this.sprite.disableBody(true, true);
@@ -25,6 +25,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
     destroy() {
         this.sprite.destroy();
     }
+    
+    enableEnemy()
+    {
+        if(!this.sprite.body.enable)
+        {
+            this.sprite.enableBody(false,0,0,true,true);
+        }
+    }
+    disableEnemy()
+    {
+        this.sprite.disableBody(true, true);
+    }
 }
 
 export class FollowEnemy extends Enemy
@@ -38,7 +50,8 @@ export class FollowEnemy extends Enemy
     {
         // Stop any previous movement from the last frame
         //this.sprite.body.setVelocity(0);
-
+        console.log("update enemy");
+        this.enableEnemy();
         // Horizontal movement
         if (this.scene.player.sprite.x < this.sprite.x) {
             this.sprite.body.setVelocityX(-1*this.speed);
@@ -81,6 +94,15 @@ export class BouncingEnemy extends Enemy
     }
     update()
     {
-        
+        this.enableEnemy();
+    }
+
+    enableEnemy()
+    {
+        if(!this.sprite.body.enable)
+        {
+            this.sprite.enableBody(false,0,0,true,true);
+            this.sprite.body.velocity.setTo( (Math.random()<=0.5) ? this.speed : -this.speed, (Math.random()<=0.5) ? this.speed : -this.speed);
+        }
     }
 }

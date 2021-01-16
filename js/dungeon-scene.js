@@ -255,8 +255,8 @@ export default class DungeonScene extends Phaser.Scene
             if(this.playerRoom != undefined && this.playerRoom.enemies != undefined)
             {
                 this.playerRoom.enemies.forEach(enemy => {
-                    enemy.sprite.body.setVelocity(0);
-                    enemy.sprite.alpha = 0;
+                    // enemy.sprite.body.setVelocity(0);
+                    // enemy.sprite.alpha = 0;
                     enemy.sprite.disableBody(true, true);
                 });
             }
