@@ -5,8 +5,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
     coins = 0;
 
     get health()
-        {
-            return this.health;
+    {
+        return this.health;
     }
     constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture);
@@ -37,7 +37,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
             this.lastKey = keys.left;
             sprite.body.setVelocityX(-speed);
             sprite.setFlipX(false);
-        } else if (keys.right.isDown) {
+        }
+        else if (keys.right.isDown) {
             this.lastKey = keys.right;
             sprite.body.setVelocityX(speed);
             sprite.setFlipX(true);
@@ -47,7 +48,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         if (keys.up.isDown) {
             this.lastKey = keys.up;
             sprite.body.setVelocityY(-speed);
-        } else if (keys.down.isDown) {
+        }
+        else if (keys.down.isDown) {
             this.lastKey = keys.down;
             sprite.body.setVelocityY(speed);
         }
@@ -58,24 +60,23 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         // Update the animation last and give left/right animations precedence over up/down animations
         if (keys.left.isDown || keys.right.isDown) {
             sprite.anims.play("player-walk", true);
-        } else if (keys.up.isDown) {
+        }
+        else if (keys.up.isDown) {
             sprite.anims.play("player-walk-back", true);
-        } else if(keys.down.isDown) {
+        }
+        else if(keys.down.isDown) {
             sprite.anims.play("player-walk-forward", true);
-        } else {
-
+        }
+        else {
             sprite.anims.stop();
             // If we were moving, pick and idle frame to use
-            if (this.lastKey == keys.up) 
-            {
-            sprite.setTexture("characters", 37);
+            if (this.lastKey == keys.up) {
+                sprite.setTexture("characters", 37);
             }
-            else if(this.lastKey == keys.left || this.lastKey == keys.right)
-            {
-            sprite.setTexture("characters", 13);
+            else if(this.lastKey == keys.left || this.lastKey == keys.right) {
+                sprite.setTexture("characters", 13);
             }
-            else 
-            {
+            else {
                 sprite.setTexture("characters", 1);
             }
         }
@@ -85,12 +86,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.sprite.destroy();
     }
 
-    setVelocity(x, y){
-        this.sprite.body.setVelocity(x, y);
-    }
+    addDamage(){
+        --this.health;
+        this.player.setVelocity(dir.x, dir.y);
+        this.player.tint(0xff0000);
 
-    tint(color){
-        this.sprite.tint = color;
+        if(this.health <= 0) this.destroy();
     }
 
     throwKnife(){

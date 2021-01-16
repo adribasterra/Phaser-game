@@ -72,9 +72,9 @@ export class FollowEnemy extends Enemy
 
 export class BouncingEnemy extends Enemy
 {
-    constructor(scene,x,y,speed)
+    constructor(scene, x, y, speed)
     {
-        super(scene,x,y);
+        super(scene, x, y);
         this.speed = speed;
         this.sprite.body.velocity.setTo(speed, speed);
         this.sprite.body.bounce.set(1);

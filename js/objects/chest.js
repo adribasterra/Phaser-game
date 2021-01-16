@@ -3,7 +3,7 @@ export default class Chest extends Phaser.Physics.Arcade.Sprite {
 	constructor(scene, x, y, texture, frame)
 	{
 		super(scene, x, y, texture, frame);
-        //this.disableBody(true, true);
+        this.sprite = scene.physics.add.sprite(x, y, "characters", 4);
         this.play("chest-closed");
 	}
 
