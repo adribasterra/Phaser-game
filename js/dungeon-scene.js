@@ -253,7 +253,6 @@ export default class DungeonScene extends Phaser.Scene {
     if(this.playerRoom.enemies != undefined)
     {
       this.playerRoom.enemies.forEach(enemy => {
-        enemy.sprite.enableBody(false,0,0,true,true);
         enemy.update();
       });
     }
@@ -261,14 +260,14 @@ export default class DungeonScene extends Phaser.Scene {
     if(this.playerRoom.chests != undefined)
     {
       this.playerRoom.chests.forEach(chest => {
-        this.physics.add.collider(this.player.sprite, chest.sprite, this.HandlePlayerChestCollision(chest));
+        this.physics.add.collider(this.player.sprite, chest.sprite, this.HandlePlayerChestCollision,undefined,this);
       });
     }
 
     this.tilemapVisibility.setActiveRoom(this.playerRoom);
   }
 
-  HandlePlayerEnemyCollision(player, enemy){
+  HandlePlayerEnemyCollision(){
     console.log("collision");
     //Calculate oposite direction of collision to make player go back
     const dx = this.player.x - enemy.x;
