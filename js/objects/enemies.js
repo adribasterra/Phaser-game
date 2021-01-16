@@ -50,7 +50,6 @@ export class FollowEnemy extends Enemy
     {
         // Stop any previous movement from the last frame
         //this.sprite.body.setVelocity(0);
-        console.log("update enemy");
         this.enableEnemy();
         // Horizontal movement
         if (this.scene.player.sprite.x < this.sprite.x) {

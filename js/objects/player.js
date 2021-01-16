@@ -86,10 +86,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.sprite.destroy();
     }
 
-    addDamage(){
+    addDamage(dir){
         --this.health;
-        this.player.setVelocity(dir.x, dir.y);
-        this.player.tint(0xff0000);
+        this.sprite.setVelocity(dir.x, dir.y);
+        this.sprite.tint = 0xff0000;
 
         if(this.health <= 0) this.destroy();
     }
