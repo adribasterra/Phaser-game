@@ -217,9 +217,18 @@ export default class DungeonScene extends Phaser.Scene {
       })
       .setScrollFactor(0);
 
+    this.hit = 0;
   }
 
   update(time, delta) {
+    if(this.hit > 0){
+      ++this.hit;
+      if(this.hit > 10){
+        this.hit = 0;
+        this.player.sprite.clearTint();
+      }
+      return;
+    }
     if (this.hasPlayerReachedStairs) return;
 
     this.player.update();
@@ -267,9 +276,11 @@ export default class DungeonScene extends Phaser.Scene {
 
     const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200);
     this.player.setVelocity(dir.x, dir.y);
+    this.player.tint(0xff0000);
+    this.hit = 1;
   }
 
   HandlePlayerChestCollision(player, chest){
-    chest.open();
+    //chest.open();
   }
 }

@@ -1,7 +1,7 @@
 export default class Player {
   constructor(scene, x, y) {
     this.scene = scene;
-
+    this.knives = Phaser.Physics.Arcade.Group;
     const anims = scene.anims;
     anims.create({
       key: "player-walk",
@@ -22,12 +22,10 @@ export default class Player {
       repeat: -1
     });
 
-        this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
+    this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
 
     this.sprite.anims.play("player-walk-back");
-
     this.sprite.body.immovable = true;
-    
     this.keys = scene.input.keyboard.createCursorKeys();
   }
 
@@ -45,21 +43,21 @@ export default class Player {
 
     // Horizontal movement
     if (keys.left.isDown) {
-          this.lastKey = keys.left;
+      this.lastKey = keys.left;
       sprite.body.setVelocityX(-speed);
       sprite.setFlipX(false);
     } else if (keys.right.isDown) {
-          this.lastKey = keys.right;
+      this.lastKey = keys.right;
       sprite.body.setVelocityX(speed);
       sprite.setFlipX(true);
     }
 
     // Vertical movement
     if (keys.up.isDown) {
-          this.lastKey = keys.up;
+      this.lastKey = keys.up;
       sprite.body.setVelocityY(-speed);
     } else if (keys.down.isDown) {
-          this.lastKey = keys.down;
+      this.lastKey = keys.down;
       sprite.body.setVelocityY(speed);
     }
 
@@ -74,8 +72,8 @@ export default class Player {
     } else if(keys.down.isDown) {
       sprite.anims.play("player-walk-forward", true);
     } else {
-      sprite.anims.stop();
 
+      sprite.anims.stop();
       // If we were moving, pick and idle frame to use
       if (this.lastKey == keys.up) 
       {
@@ -98,5 +96,13 @@ export default class Player {
 
   setVelocity(x, y){
     this.sprite.body.setVelocity(x, y);
+  }
+
+  tint(color){
+    this.sprite.tint = color;
+  }
+
+  throwKnife(){
+    
   }
 }
