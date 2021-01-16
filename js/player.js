@@ -92,6 +92,10 @@ export default class Player {
     }
   }
 
+  SetVelocity(vel){
+    this.sprite.setVelocity(vel);
+  }
+
   destroy() {
     this.sprite.destroy();
   }
