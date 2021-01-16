@@ -158,7 +158,7 @@ export default class DungeonScene extends Phaser.Scene {
 
         this.physics.add.collider(enemy.sprite, this.groundLayer);
         this.physics.add.collider(enemy.sprite, this.stuffLayer);
-        this.physics.add.collider(enemy.sprite, this.player.sprite, this.HandlePlayerEnemyCollision(enemy));
+        this.physics.add.collider(enemy.sprite, this.player.sprite, this.HandlePlayerEnemyCollision, undefined, this);
         //this.physics.add.collider(enemy.sprite, this.player.sprite);
 
         room.enemies.push(enemy);
@@ -172,7 +172,7 @@ export default class DungeonScene extends Phaser.Scene {
 
         this.physics.add.collider(enemy.sprite, this.groundLayer);
         this.physics.add.collider(enemy.sprite, this.stuffLayer);
-        this.physics.add.collider(enemy.sprite, this.player.sprite, this.HandlePlayerEnemyCollision(enemy));
+        this.physics.add.collider(enemy.sprite, this.player.sprite, this.HandlePlayerEnemyCollision, undefined, this);
         //this.physics.add.collider(enemy.sprite, this.player.sprite);
 
         room.enemies.push(enemy);
@@ -216,6 +216,7 @@ export default class DungeonScene extends Phaser.Scene {
         backgroundColor: "#ffffff"
       })
       .setScrollFactor(0);
+
   }
 
   update(time, delta) {
@@ -258,18 +259,17 @@ export default class DungeonScene extends Phaser.Scene {
     this.tilemapVisibility.setActiveRoom(this.playerRoom);
   }
 
-  HandlePlayerEnemyCollision(enemy){
+  HandlePlayerEnemyCollision(player, enemy){
     console.log("collision");
     //Calculate oposite direction of collision to make player go back
     const dx = this.player.x - enemy.x;
     const dy = this.player.y - enemy.y;
 
     const dir = new Phaser.Math.Vector2(dx, dy).normalize().scale(200);
-
-    this.player.SetVelocity(dir);
+    this.player.setVelocity(dir.x, dir.y);
   }
 
-  HandlePlayerChestCollision(chest){
-
+  HandlePlayerChestCollision(player, chest){
+    chest.open();
   }
 }

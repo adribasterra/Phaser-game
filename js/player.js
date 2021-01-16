@@ -73,7 +73,7 @@ export default class Player {
       sprite.anims.play("player-walk-back", true);
     } else if(keys.down.isDown) {
       sprite.anims.play("player-walk-forward", true);
-    }else {
+    } else {
       sprite.anims.stop();
 
       // If we were moving, pick and idle frame to use
@@ -92,11 +92,11 @@ export default class Player {
     }
   }
 
-  SetVelocity(vel){
-    this.sprite.setVelocity(vel);
-  }
-
   destroy() {
     this.sprite.destroy();
+  }
+
+  setVelocity(x, y){
+    this.sprite.body.setVelocity(x, y);
   }
 }

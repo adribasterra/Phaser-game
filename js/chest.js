@@ -18,7 +18,9 @@ export default class Chest extends Phaser.Physics.Arcade.Sprite
             frames: anims.generateFrameNumbers("characters", { start: 12, end: 14 }),
             frameRate: 5
         };
-        this.anims.create(config);
+        
+        const anims = scene.anims;
+        anims.create(config);
 
 		this.sprite.anims.play('chest-open');
 		return Phaser.Math.Between(50, 200);
