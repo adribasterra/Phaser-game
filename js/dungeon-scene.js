@@ -116,6 +116,14 @@ export default class DungeonScene extends Phaser.Scene
         //#endregion
 
         //#region Rooms
+
+        this.weapons = Phaser.Physics.Arcade.Group;
+        this.weapons = this.physics.add.group({
+            classType: Phaser.Physics.Arcade.Image,
+            enable: true,
+            physics: Phaser.Physics.Arcade,
+			maxSize: 100
+        });
     
         // Separate out the rooms into:
         //  - The starting room (index = 0)
@@ -143,7 +151,8 @@ export default class DungeonScene extends Phaser.Scene
                 this.stuffLayer.putTileAt(TILES.CHEST, room.centerX, room.centerY);
                 room.chests = [];
                 var chest = new Chest(this, room.centerX, room.centerY, TILES.CHEST);
-                this.physics.add.collider(chest.sprite, this.player.sprite, this.HandlePlayerChestCollision);
+                this.physics.add.collider(this.player.sprite, chest.sprite, this.HandlePlayerChestCollision);
+                this.physics.add.collider(this.weapons, chest.sprite, this.HandleWeaponEnemyCollision, undefined, this);
                 room.chests.push(chest);
             }
             else if (rand <= 0.5) {
@@ -173,7 +182,8 @@ export default class DungeonScene extends Phaser.Scene
                 
                 this.physics.add.collider(enemy.sprite, this.groundLayer);
                 this.physics.add.collider(enemy.sprite, this.stuffLayer);
-                this.physics.add.collider(enemy.sprite, this.player.sprite, this.HandlePlayerEnemyCollision, undefined, this);
+                this.physics.add.collider(this.player.sprite, enemy.sprite, this.HandlePlayerEnemyCollision, undefined, this);
+                this.physics.add.collider(this.weapons, enemy.sprite, this.HandleWeaponEnemyCollision, undefined, this);
 
                 room.enemies.push(enemy);
             }
@@ -186,7 +196,8 @@ export default class DungeonScene extends Phaser.Scene
         
                 this.physics.add.collider(enemy.sprite, this.groundLayer);
                 this.physics.add.collider(enemy.sprite, this.stuffLayer);
-                this.physics.add.collider(enemy.sprite, this.player.sprite, this.HandlePlayerEnemyCollision, undefined, this);
+                this.physics.add.collider(this.player.sprite, enemy.sprite, this.HandlePlayerEnemyCollision, undefined, this);
+                this.physics.add.collider(this.weapons, enemy.sprite, this.HandleWeaponEnemyCollision, undefined, this);
                 //this.physics.add.collider(enemy.sprite, this.player.sprite);
         
                 room.enemies.push(enemy);
@@ -214,6 +225,9 @@ export default class DungeonScene extends Phaser.Scene
         // Watch the player and tilemap layers for collisions, for the duration of the scene:
         this.physics.add.collider(this.player.sprite, this.groundLayer);
         this.physics.add.collider(this.player.sprite, this.stuffLayer);
+        
+        this.physics.add.collider(this.weapons, this.stuffLayer, this.HandleWeaponWallCollision, undefined, this);
+        this.physics.add.collider(this.weapons, this.groundLayer, this.HandleWeaponWallCollision, undefined, this);
         // Phaser supports multiple cameras, but you can access the default camera like this:
         const camera = this.cameras.main;
     
@@ -232,11 +246,8 @@ export default class DungeonScene extends Phaser.Scene
             .setScrollFactor(0);
     
         this.hit = 0;
-        this.weapons = Phaser.Physics.Arcade.Group;
-        this.weapons = this.physics.add.group({
-			classType: Phaser.Physics.Arcade.Image,
-			maxSize: 3
-		});
+
+        this.player.setWeapons(this.weapons);
     }
     
     update(time, delta) {
@@ -297,15 +308,15 @@ export default class DungeonScene extends Phaser.Scene
         this.hit = 1;
     }
 
-    HandleWeaponWallCollision(obj1, obj2)
+    HandleWeaponWallCollision(weapon, walls)
 	{
-		this.weapons.killAndHide(obj1);
+		this.player.weapons.killAndHide(obj1);
 	}
 
-	HandleWeaponEnemyCollision(obj1, obj2)
+	HandleWeaponEnemyCollision(enemy, weapon)
 	{
-		this.weapons.killAndHide(obj1);
-		this.enemies.killAndHide(obj2);
+        this.player.weapons.killAndHide(obj2);
+        this.playerRoom.enemies[0].setDead(true);
 	}
 
     HandlePlayerChestCollision(player, chest){
