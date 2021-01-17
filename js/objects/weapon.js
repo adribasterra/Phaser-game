@@ -1,5 +1,5 @@
 
-class WeaponGroup extends Phaser.Physics.Arcade.Group
+export default class WeaponGroup extends Phaser.Physics.Arcade.Group
 {
 	constructor(scene) {
 		super(scene.physics.world, scene);
@@ -17,7 +17,7 @@ class WeaponGroup extends Phaser.Physics.Arcade.Group
     getReadyToFire(x, y) {
 		// Get the first available sprite in the group
 		const weapon = this.getFirstDead(false);
-		if (weapon) {
+		if (weapon != null) {
 			weapon.fire(x, y);
 		}
     }
