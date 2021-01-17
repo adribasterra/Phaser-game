@@ -122,7 +122,6 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
 
 		const vec = new Phaser.Math.Vector2(0, 0);
         const parts = this.anims.currentAnim.key.split('-');
-        debugger;
         if(parts.length < 3) { //There is no back/forward in name
             if (this.sprite.scaleX < 0) {
                 vec.x = 1;

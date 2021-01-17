@@ -12,6 +12,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
         this.play("enemy-walk-back");
 
         this.keys = scene.input.keyboard.createCursorKeys();
+        this.dead = false;
     }
 
     freeze() {
@@ -28,14 +29,18 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
     
     enableEnemy()
     {
-        if(!this.sprite.body.enable)
+        if(!this.dead && !this.sprite.body.enable)
         {
             this.sprite.enableBody(false,0,0,true,true);
         }
     }
     disableEnemy()
     {
-        this.sprite.disableBody(true, true);
+        if(!this.dead) this.sprite.disableBody(true, true);
+    }
+    setDead(dead){
+        this.disableEnemy();
+        this.dead = dead;
     }
 }
 
@@ -45,38 +50,42 @@ export class FollowEnemy extends Enemy
     {
         super(scene,x,y);
         this.speed = speed;
+        this.dead = false;
     }
     update()
     {
-        // Stop any previous movement from the last frame
-        //this.sprite.body.setVelocity(0);
-        this.enableEnemy();
-        // Horizontal movement
-        if (this.scene.player.sprite.x < this.sprite.x) {
-            this.sprite.body.setVelocityX(-1*this.speed);
-            this.sprite.setFlipX(true);
-        }
-        else if (this.scene.player.sprite.x > this.sprite.x) {
-            this.sprite.body.setVelocityX(1*this.speed);
-            this.sprite.setFlipX(false);
-        }
-        else
-        {
-            this.sprite.body.setVelocityX(0);
-        }
+        if(!this.dead) {
+                
+            // Stop any previous movement from the last frame
+            //this.sprite.body.setVelocity(0);
+            this.enableEnemy();
+            // Horizontal movement
+            if (this.scene.player.sprite.x < this.sprite.x) {
+                this.sprite.body.setVelocityX(-1*this.speed);
+                this.sprite.setFlipX(true);
+            }
+            else if (this.scene.player.sprite.x > this.sprite.x) {
+                this.sprite.body.setVelocityX(1*this.speed);
+                this.sprite.setFlipX(false);
+            }
+            else
+            {
+                this.sprite.body.setVelocityX(0);
+            }
 
-        // Vertical movement
-        if (this.scene.player.sprite.y < this.sprite.y) {
-            this.sprite.body.setVelocityY(-1*this.speed);
-            this.sprite.setFlipX(true);
-        }
-        else if (this.scene.player.sprite.y > this.sprite.y) {
-            this.sprite.body.setVelocityY(1*this.speed);
-            this.sprite.setFlipX(false);
-        }
-        else
-        {
-            this.sprite.body.setVelocityY(0);
+            // Vertical movement
+            if (this.scene.player.sprite.y < this.sprite.y) {
+                this.sprite.body.setVelocityY(-1*this.speed);
+                this.sprite.setFlipX(true);
+            }
+            else if (this.scene.player.sprite.y > this.sprite.y) {
+                this.sprite.body.setVelocityY(1*this.speed);
+                this.sprite.setFlipX(false);
+            }
+            else
+            {
+                this.sprite.body.setVelocityY(0);
+            }
         }
     }
 }
@@ -90,15 +99,16 @@ export class BouncingEnemy extends Enemy
         this.speed = speed;
         this.sprite.body.velocity.setTo(speed, speed);
         this.sprite.body.bounce.set(1);
+        this.dead = false;
     }
     update()
     {
-        this.enableEnemy();
+        if(!this.dead) this.enableEnemy();
     }
 
     enableEnemy()
     {
-        if(!this.sprite.body.enable)
+        if(!this.dead && !this.sprite.body.enable)
         {
             this.sprite.enableBody(false,0,0,true,true);
             this.sprite.body.velocity.setTo( (Math.random()<=0.5) ? this.speed : -this.speed, (Math.random()<=0.5) ? this.speed : -this.speed);
