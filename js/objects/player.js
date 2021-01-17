@@ -18,6 +18,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.play("player-walk-back");
         this.sprite.body.immovable = true;
         this.keys = scene.input.keyboard.createCursorKeys();
+        this.spacebar = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.once = false;
     }
         
     freeze() {
@@ -80,6 +82,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
                 sprite.setTexture("characters", 1);
             }
         }
+        if(this.spacebar.isDown && this.once){
+            console.log("pressed");
+            this.initWeapon();
+            this.once = false;
+        }
+        if(!this.spacebar.isDown){
+            this.once = true;
+        }
     }
 
     setWeapons(weapons)
@@ -101,8 +111,10 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
 
     initWeapon(){
         if (!this.weapons) return;
+
+        //this.weapons.getReadyToFire(this.ship.x, this.ship.y - 20);
         
-		const weapon = this.weapons.get(this.x, this.y, 'knife');
+		const weapon = this.weapons.get(this.x, this.y, 'weapon');
 		if (!weapon) return;
 
 		const vec = new Phaser.Math.Vector2(0, 0);

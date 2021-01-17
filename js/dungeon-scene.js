@@ -232,11 +232,24 @@ export default class DungeonScene extends Phaser.Scene
             .setScrollFactor(0);
     
         this.hit = 0;
+        //this.weapons = new WeaponGroup();
         this.weapons = Phaser.Physics.Arcade.Group;
         this.weapons = this.physics.add.group({
-			classType: Phaser.Physics.Arcade.Image,
+            classType: Phaser.Physics.Arcade.Image,
+            enable: true,
+            physics: Phaser.Physics.Arcade,
 			maxSize: 3
-		});
+        });
+        
+        // this.weapons.createMultiple({
+        //     classType: Weapon,   // This is the class we create just below
+		// 	frameQuantity: 30,  // Create 30 instances in the pool
+		// 	active: false,
+		// 	visible: false,
+        //     key: 'weapon'
+        // });
+        
+        this.player.setWeapons(this.weapons);
     }
     
     update(time, delta) {
