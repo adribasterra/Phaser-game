@@ -54,11 +54,9 @@ export class FollowEnemy extends Enemy
         // Horizontal movement
         if (this.scene.player.sprite.x < this.sprite.x) {
             this.sprite.body.setVelocityX(-1*this.speed);
-            this.sprite.setFlipX(true);
         }
         else if (this.scene.player.sprite.x > this.sprite.x) {
             this.sprite.body.setVelocityX(1*this.speed);
-            this.sprite.setFlipX(false);
         }
         else
         {
@@ -68,11 +66,9 @@ export class FollowEnemy extends Enemy
         // Vertical movement
         if (this.scene.player.sprite.y < this.sprite.y) {
             this.sprite.body.setVelocityY(-1*this.speed);
-            this.sprite.setFlipX(true);
         }
         else if (this.scene.player.sprite.y > this.sprite.y) {
             this.sprite.body.setVelocityY(1*this.speed);
-            this.sprite.setFlipX(false);
         }
         else
         {

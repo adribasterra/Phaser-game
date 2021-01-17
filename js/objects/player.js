@@ -88,7 +88,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
 	}
     
     destroy() {
-        this.sprite.destroy();
+        this.sprite.disableBody(true, true);
+        //this.sprite.destroy();
     }
 
     addDamage(dir){
