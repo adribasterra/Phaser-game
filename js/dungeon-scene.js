@@ -232,6 +232,11 @@ export default class DungeonScene extends Phaser.Scene
             .setScrollFactor(0);
     
         this.hit = 0;
+        this.weapons = Phaser.Physics.Arcade.Group;
+        this.weapons = this.physics.add.group({
+			classType: Phaser.Physics.Arcade.Image,
+			maxSize: 3
+		});
     }
     
     update(time, delta) {
@@ -291,32 +296,44 @@ export default class DungeonScene extends Phaser.Scene
         this.player.addDamage(dir);
         this.hit = 1;
     }
+
+    HandleWeaponWallCollision(obj1, obj2)
+	{
+		this.weapons.killAndHide(obj1);
+	}
+
+	HandleWeaponEnemyCollision(obj1, obj2)
+	{
+		this.weapons.killAndHide(obj1);
+		this.enemies.killAndHide(obj2);
+	}
+
     HandlePlayerChestCollision(player, chest){
         //chest.open();
-    this.player.update();
-    // Find the player's room using another helper method from the dungeon that converts from
-    // dungeon XY (in grid units) to the corresponding room object
-    const playerTileX = this.groundLayer.worldToTileX(this.player.sprite.x);
-    const playerTileY = this.groundLayer.worldToTileY(this.player.sprite.y);
-    if(this.playerRoom != this.dungeon.getRoomAt(playerTileX, playerTileY))
-    {
-      if(this.playerRoom!=undefined && this.playerRoom.enemis != undefined)
-      {
-        this.playerRoom.enemis.forEach(enemy => {
-          //enemy.sprite.body.setVelocity(0);
-          //enemy.sprite.alpha = 0;
-          enemy.sprite.disableBody(false, true);
-        });
-      }
-    }
+        this.player.update();
+        // Find the player's room using another helper method from the dungeon that converts from
+        // dungeon XY (in grid units) to the corresponding room object
+        const playerTileX = this.groundLayer.worldToTileX(this.player.sprite.x);
+        const playerTileY = this.groundLayer.worldToTileY(this.player.sprite.y);
+        if(this.playerRoom != this.dungeon.getRoomAt(playerTileX, playerTileY))
+        {
+            if(this.playerRoom!=undefined && this.playerRoom.enemis != undefined)
+            {
+                this.playerRoom.enemis.forEach(enemy => {
+                    //enemy.sprite.body.setVelocity(0);
+                    //enemy.sprite.alpha = 0;
+                    enemy.sprite.disableBody(false, true);
+                });
+            }
+        }
 
-    this.playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
+        this.playerRoom = this.dungeon.getRoomAt(playerTileX, playerTileY);
 
-    if(this.playerRoom.enemis != undefined)
-    {
-      this.playerRoom.enemis.forEach(enemy => {
-        enemy.update();
-      });
+        if(this.playerRoom.enemis != undefined)
+        {
+            this.playerRoom.enemis.forEach(enemy => {
+                enemy.update();
+            });
+        }
     }
-}
 }

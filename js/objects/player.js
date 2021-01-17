@@ -11,7 +11,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
     constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture);
         this.scene = scene;
-        this.knives = Phaser.Physics.Arcade.Group;
+        this.weapons = Phaser.Physics.Arcade.Group;
     
         this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
     
@@ -81,6 +81,11 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
             }
         }
     }
+
+    setWeapons(weapons)
+	{
+		this.weapons = weapons;
+	}
     
     destroy() {
         this.sprite.destroy();
@@ -94,7 +99,42 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         if(this.health <= 0) this.destroy();
     }
 
-    throwKnife(){
+    initWeapon(){
+        if (!this.weapons) return;
         
+		const weapon = this.weapons.get(this.x, this.y, 'knife');
+		if (!weapon) return;
+
+		const vec = new Phaser.Math.Vector2(0, 0);
+        const parts = this.anims.currentAnim.key.split('-');
+        
+        if(parts.length < 3) { //There is no back/forward in name
+            if (this.scaleX < 0) vec.x = -1;
+            else vec.x = 1;
+        }
+        else{
+            const direction = parts[2];
+            switch (direction)
+            {
+                case 'back':
+                    vec.y = -1;
+                    break;
+
+                case 'forward':
+                    vec.y = 1;
+                    break;
+            }
+        }
+		const angle = vec.angle();
+
+		weapon.setActive(true);
+		weapon.setVisible(true);
+
+		weapon.setRotation(angle);
+
+		weapon.x += vec.x * 16;
+		weapon.y += vec.y * 16;
+
+		weapon.setVelocity(vec.x * 300, vec.y * 300);
     }
 }
