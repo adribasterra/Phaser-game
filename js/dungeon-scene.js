@@ -310,12 +310,12 @@ export default class DungeonScene extends Phaser.Scene
 
     HandleWeaponWallCollision(weapon, walls)
 	{
-		this.player.weapons.killAndHide(obj1);
+		this.player.weapons.killAndHide(weapon);
 	}
 
 	HandleWeaponEnemyCollision(enemy, weapon)
 	{
-        this.player.weapons.killAndHide(obj2);
+        this.player.weapons.killAndHide(weapon);
         this.playerRoom.enemies[0].setDead(true);
 	}
 
