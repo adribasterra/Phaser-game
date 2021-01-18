@@ -11,6 +11,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
     constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture);
         this.scene = scene;
+        this.sword = scene.physics.add.sprite(x, y, "weapon", 1).setScale(0.1);
+        this.sword.disableBody(true, true);
+        this.sword.setOrigin(0,1);
         this.weapons = Phaser.Physics.Arcade.Group;
     
         this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
@@ -88,12 +91,30 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
             }
         }
         if(this.spacebar.isDown && this.once){
-            console.log("pressed");
-            this.initWeapon();
+            //this.initWeapon();
+            this.attack = true;
             this.once = false;
         }
         if(!this.spacebar.isDown){
             this.once = true;
+        }
+
+        if(this.attack)
+        {
+            if(!this.sword.body.enable)
+            {
+                this.originalAngle = this.sword.angle;
+                this.sword.enableBody(false,0,0,true,true);
+            }
+            this.sword.x = this.sprite.x+10;
+            this.sword.y = this.sprite.y;
+            this.sword.angle +=10;
+            if(this.sword.angle>120)
+            {
+                this.attack = false;
+                this.sword.angle = 0;
+                this.sword.disableBody(true, true);
+            }
         }
     }
 
@@ -148,7 +169,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
 
 		weapon.setActive(true);
 		weapon.setVisible(true);
-
+        weapon.setScale(0.1);
 		weapon.setRotation(angle);
 
 		weapon.x += vec.x * 16;

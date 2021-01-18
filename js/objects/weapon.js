@@ -11,7 +11,8 @@ export default class WeaponGroup extends Phaser.Physics.Arcade.Group
 			active: false,
 			visible: false,
 			key: 'weapon'
-		})
+		});
+
     }
 
     getReadyToFire(x, y) {

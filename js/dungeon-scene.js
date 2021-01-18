@@ -20,6 +20,7 @@ export default class DungeonScene extends Phaser.Scene
     }
     preload() {
         this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded.png");
+        this.load.image("weapon", "./assets/weapon.png");
         this.load.spritesheet(
             "characters",
             "./assets/character_set_1.png", //"./assets/spritesheets/buch-characters-64px-extruded.png"
@@ -123,6 +124,10 @@ export default class DungeonScene extends Phaser.Scene
             enable: true,
             physics: Phaser.Physics.Arcade,
 			maxSize: 100
+        });
+        console.log(this.weapons);
+        this.weapons.children.iterate((child) => {
+          child.setScale(2, 2);
         });
     
         // Separate out the rooms into:
