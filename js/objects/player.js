@@ -1,4 +1,4 @@
-
+import { Sword } from "./weapon.js";
 export default class Player extends Phaser.Physics.Arcade.Sprite
 {
     health = 3;
@@ -11,9 +11,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
     constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture);
         this.scene = scene;
-        this.sword = scene.physics.add.sprite(x, y, "weapon", 1).setScale(0.1);
-        this.sword.disableBody(true, true);
-        this.sword.setOrigin(0,1);
+
         this.weapons = Phaser.Physics.Arcade.Group;
     
         this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
@@ -23,6 +21,8 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.keys = scene.input.keyboard.createCursorKeys();
         this.spacebar = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.once = false;
+        this.lastKey = this.keys.down;
+        this.sword = new Sword(scene, x, y, texture, frame, this);
     }
         
     freeze() {
@@ -41,14 +41,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         if (keys.left.isDown) {
             this.lastKey = keys.left;
             sprite.body.setVelocityX(-speed);
-            // sprite.setFlipX(false);
-            sprite.scaleX = 1;
+             sprite.setFlipX(false);
+            //sprite.scaleX = 1;
         }
         else if (keys.right.isDown) {
             this.lastKey = keys.right;
             sprite.body.setVelocityX(speed);
-            // sprite.setFlipX(true);
-            sprite.scaleX = -1;
+             sprite.setFlipX(true);
+            //sprite.scaleX = -1;
         }
 
         // Vertical movement
@@ -101,20 +101,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
 
         if(this.attack)
         {
-            if(!this.sword.body.enable)
-            {
-                this.originalAngle = this.sword.angle;
-                this.sword.enableBody(false,0,0,true,true);
-            }
-            this.sword.x = this.sprite.x+10;
-            this.sword.y = this.sprite.y;
-            this.sword.angle +=10;
-            if(this.sword.angle>120)
-            {
-                this.attack = false;
-                this.sword.angle = 0;
-                this.sword.disableBody(true, true);
-            }
+            this.sword.update();
         }
     }
 

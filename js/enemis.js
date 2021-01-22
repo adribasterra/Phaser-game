@@ -44,6 +44,7 @@ export class FollowEnemy extends Enemy
   {
     super(scene,x,y);
     this.speed = speed;
+    this.sprite.body.bounce.set(0.2);
   }
   update()
   {
