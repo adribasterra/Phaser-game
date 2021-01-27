@@ -40,12 +40,16 @@ class Weapon extends Phaser.Physics.Arcade.Sprite {
 */
 export class Sword extends Phaser.Physics.Arcade.Sprite
 {
-	constructor(scene, x, y, texture, frame, player) {
+	constructor(scene, x, y, texture, frame, player, mode) {
 
         super(scene, x, y, texture);
         this.scene = scene;
 
-		this.sprite = scene.physics.add.sprite(x, y, "weapon", 1).setScale(0.1);
+        if(mode!=1)
+		  this.sprite = scene.physics.add.sprite(x, y, "weapon", 1).setScale(0.1);
+        else
+          this.sprite = scene.physics.add.sprite(x, y, "pick", 1).setScale(0.01);
+
         this.sprite.disableBody(true, true);
         this.sprite.setOrigin(0,1);
         this.player = player;

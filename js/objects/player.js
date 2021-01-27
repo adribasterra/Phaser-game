@@ -20,9 +20,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.sprite.body.immovable = true;
         this.keys = scene.input.keyboard.createCursorKeys();
         this.spacebar = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.change = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
         this.once = false;
+        this.once2 = false;
         this.lastKey = this.keys.down;
-        this.sword = new Sword(scene, x, y, texture, frame, this);
+        this.sword = new Sword(scene, x, y, texture, frame, this,0);
+        this.pick = new Sword(scene, x, y, texture, frame, this,1);
+
+        this.currentTool = this.sword;
     }
         
     freeze() {
@@ -98,10 +103,17 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         if(!this.spacebar.isDown){
             this.once = true;
         }
-
+        if(this.change.isDown && this.once2){
+            //this.initWeapon();
+            this.changeTool();
+            this.once2 = false;
+        }
+        if(!this.change.isDown){
+            this.once2 = true;
+        }
         if(this.attack)
         {
-            this.sword.update();
+            this.currentTool.update();
         }
     }
 
@@ -121,6 +133,19 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.sprite.tint = 0xff0000;
 
         if(this.health <= 0) this.destroy();
+    }
+
+    changeTool()
+    {
+        console.log("change");
+        if(this.currentTool == this.sword)
+            {
+                this.currentTool = this.pick;
+            }
+            else
+            {
+                this.currentTool = this.sword;
+            }
     }
 
     initWeapon(){

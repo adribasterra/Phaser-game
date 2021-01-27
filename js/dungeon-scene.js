@@ -19,8 +19,9 @@ export default class DungeonScene extends Phaser.Scene
         this.level = 0;
     }
     preload() {
-        this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded.png");
+        this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded2.png");
         this.load.image("weapon", "./assets/weapon.png");
+        this.load.image("pick", "./assets/pick.png");
         this.load.spritesheet(
             "characters",
             "./assets/character_set_1.png", //"./assets/spritesheets/buch-characters-64px-extruded.png"
@@ -144,7 +145,7 @@ export default class DungeonScene extends Phaser.Scene
         const x = map.tileToWorldX(playerRoom.centerX);
         const y = map.tileToWorldY(playerRoom.centerY);
         this.player = new Player(this, x, y);
-    
+
         // Place the stairs
         this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
         // Place stuff in the 90% "otherRooms"
@@ -210,8 +211,8 @@ export default class DungeonScene extends Phaser.Scene
     
         // Not exactly correct for the tileset since there are more possible floor tiles, but this will
         // do for the example.
-        this.groundLayer.setCollisionByExclusion([-1, 6, 7, 8, 26]);
-        this.stuffLayer.setCollisionByExclusion([-1, 6, 7, 8, 26]);
+        this.groundLayer.setCollisionByExclusion([-1, 6, 63, 64, 65, 66]);
+        this.stuffLayer.setCollisionByExclusion([-1, 6, 63, 64, 65, 66]);
     
         this.stuffLayer.setTileIndexCallback(TILES.STAIRS, () => {
             this.stuffLayer.setTileIndexCallback(TILES.STAIRS, null);
