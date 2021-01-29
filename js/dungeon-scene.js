@@ -18,6 +18,7 @@ export default class DungeonScene extends Phaser.Scene
         super();
         this.level = 0;
         this.score = 0;
+        this.gameOver = false;
     }
     preload() {
         this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded2.png");
@@ -32,6 +33,14 @@ export default class DungeonScene extends Phaser.Scene
             frameHeight: 32,
             }
         );
+        this.load.spritesheet(
+            "minerals",
+            "./assets/rocks.png",
+            {
+            frameWidth: 96,
+            frameHeight: 96,
+            }
+        );
     }
     
     create() {
@@ -40,7 +49,15 @@ export default class DungeonScene extends Phaser.Scene
         createEnemyAnims(this.anims);
         createChestAnims(this.anims);
         
-        this.level++;
+        if(!this.gameOver)
+        {
+          this.level++; 
+        }
+        else
+        {
+            this.gameOver = false;
+        }
+
 
         this.hasPlayerReachedStairs = false;
     
@@ -173,9 +190,20 @@ export default class DungeonScene extends Phaser.Scene
                 const y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
                 this.stuffLayer.weightedRandomize(x, y, 1, 1, TILES.POT);
             }
-            else if (rand <= 0.5) {
+            else if (rand <= 0.65) {
                 // MINERALES
-                
+                var num = Phaser.Math.Between(1, 5);
+                for(var i = 0; i< num; i++)
+                {
+                    const xPos = Phaser.Math.Between(room.left + 2, room.right - 2);
+                    const yPos = Phaser.Math.Between(room.top + 2, room.bottom - 2);
+                    const x = map.tileToWorldX(xPos);
+                    const y = map.tileToWorldY(yPos);
+                    var mineral = new Treasure(this, x, y,1);
+                    this.physics.add.collider(this.player.sprite, mineral.sprite);
+                    this.physics.add.overlap(this.player.pick.sprite, mineral.sprite, this.HandlerPlayerTresureCollision, undefined, this);
+                    room.trasures.push(mineral);
+                }
             }
             else {
                 // 25% of either 2 or 4 towers, depending on the room size
@@ -198,7 +226,7 @@ export default class DungeonScene extends Phaser.Scene
                 
                 this.physics.add.collider(enemy.sprite, this.groundLayer);
                 this.physics.add.collider(enemy.sprite, this.stuffLayer);
-                this.physics.add.collider(this.player.sprite, enemy.sprite, this.HandlePlayerEnemyCollision, undefined, this);
+                this.physics.add.overlap(this.player.sprite, enemy.sprite, this.HandlePlayerEnemyCollision, undefined, this);
                 //this.physics.add.collider(this.player.sword.sprite, enemy.sprite, this.HandleWeaponEnemyCollision, undefined, this);
 				this.physics.add.overlap(this.player.sword.sprite, enemy.sprite, this.HandleWeaponEnemyCollision, null, this);
                 room.enemies.push(enemy);
@@ -212,14 +240,23 @@ export default class DungeonScene extends Phaser.Scene
         
                 this.physics.add.collider(enemy.sprite, this.groundLayer);
                 this.physics.add.collider(enemy.sprite, this.stuffLayer);
-                this.physics.add.collider(this.player.sprite, enemy.sprite, this.HandlePlayerEnemyCollision, undefined, this);
+                this.physics.add.overlap(this.player.sprite, enemy.sprite, this.HandlePlayerEnemyCollision, undefined, this);
                 //this.physics.add.collider(this.player.sword.sprite, enemy.sprite, this.HandleWeaponEnemyCollision, undefined, this);
                 //this.physics.add.collider(enemy.sprite, this.player.sprite);
         		this.physics.add.overlap(this.player.sword.sprite, enemy.sprite, this.HandleWeaponEnemyCollision, null, this);
                 room.enemies.push(enemy);
             }
         });
-    console.log(this.trasures);
+        
+        otherRooms.forEach(room => {
+
+            room.enemies.forEach(enemy => {
+                room.trasures.forEach(tresure => {
+                    this.physics.add.collider(enemy.sprite, tresure.sprite);
+                });
+            });
+
+        });
         // Not exactly correct for the tileset since there are more possible floor tiles, but this will
         // do for the example.
         this.groundLayer.setCollisionByExclusion([-1, 6, 63, 64, 65, 66]);
@@ -253,7 +290,7 @@ export default class DungeonScene extends Phaser.Scene
     
         // Help text that has a "fixed" position on the screen
         this.scoreText = this.add
-            .text(16, 16, `Find the stairs. Go deeper.\nCurrent level: ${this.level}\nScore: ${this.score}`, {
+            .text(16, 16, `Find the stairs. Go deeper.\nCurrent level: ${this.level}\nTresure: ${this.score}$`, {
                 font: "18px monospace",
                 fill: "#000000",
                 padding: { x: 20, y: 10 },
@@ -301,13 +338,6 @@ export default class DungeonScene extends Phaser.Scene
                 enemy.update();
             });
         }
-
-        if(this.playerRoom.chests != undefined)
-        {
-            this.playerRoom.chests.forEach(chest => {
-                this.physics.add.collider(this.player.sprite, chest.sprite, this.HandlePlayerChestCollision, undefined, this);
-            });
-        }
     
         this.tilemapVisibility.setActiveRoom(this.playerRoom);
     }
@@ -337,9 +367,9 @@ export default class DungeonScene extends Phaser.Scene
     {
         //this.playerRoom.tresures[0].sprite.destroy();
         //this.playerRoom.tresures = [];
-        this.score +=1000;
+        this.score +=tresure.points;
         tresure.disableBody(true, true);
-        this.scoreText.setText(`Find the stairs. Go deeper.\nCurrent level: ${this.level}\nScore: ${this.score}`);
+        this.scoreText.setText(`Find the stairs. Go deeper.\nCurrent level: ${this.level}\nTresure: ${this.score}$`);
     }
     HandlePlayerChestCollision(player, chest){
         //chest.open();

@@ -1,23 +1,16 @@
 import { Sword } from "./weapon.js";
 export default class Player extends Phaser.Physics.Arcade.Sprite
 {
-    health = 3;
-    coins = 0;
-
-    get health()
-    {
-        return this.health;
-    }
     constructor(scene, x, y, texture, frame) {
         super(scene, x, y, texture);
         this.scene = scene;
-
+        this.health = 3;
         this.weapons = Phaser.Physics.Arcade.Group;
     
         this.sprite = scene.physics.add.sprite(x, y, "characters", 1).setScale(1.2);
     
         this.play("player-walk-back");
-        this.sprite.body.immovable = true;
+        //this.sprite.body.immovable = true;
         this.keys = scene.input.keyboard.createCursorKeys();
         this.spacebar = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         this.change = scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.C);
@@ -132,7 +125,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite
         this.sprite.setVelocity(dir.x, dir.y);
         this.sprite.tint = 0xff0000;
 
-        if(this.health <= 0) this.destroy();
+        if(this.health <= 0) 
+            {
+                this.scene.gameOver = true;
+                this.scene.create();
+            }
+
     }
 
     changeTool()

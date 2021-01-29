@@ -54,6 +54,7 @@ export class Sword extends Phaser.Physics.Arcade.Sprite
         this.sprite.setOrigin(0,1);
         this.player = player;
         this.angleDist = 0;
+        this.distanceFromPlayer = 10;
 	}
 	update()
 	{
@@ -68,7 +69,7 @@ export class Sword extends Phaser.Physics.Arcade.Sprite
 
         if(keys.right.isDown || lastKey == keys.right)
         {
-            this.sprite.x = this.player.sprite.x+10;
+            this.sprite.x = this.player.sprite.x+this.distanceFromPlayer;
             this.sprite.y = this.player.sprite.y;
             this.sprite.scaleX = 0.1;
             this.sprite.scaleY = 0.1;
@@ -76,7 +77,7 @@ export class Sword extends Phaser.Physics.Arcade.Sprite
         }
         else if(keys.left.isDown || lastKey == keys.left)
         {
-            this.sprite.x = this.player.sprite.x-10;
+            this.sprite.x = this.player.sprite.x-this.distanceFromPlayer;
             this.sprite.y = this.player.sprite.y;
             this.sprite.scaleX = -0.1;
             this.sprite.scaleY = 0.1;
@@ -85,7 +86,7 @@ export class Sword extends Phaser.Physics.Arcade.Sprite
         else if(keys.up.isDown || lastKey == keys.up)
         {
             this.sprite.x = this.player.sprite.x;
-            this.sprite.y = this.player.sprite.y-10;
+            this.sprite.y = this.player.sprite.y-this.distanceFromPlayer;
             this.sprite.scaleX = -0.1;
             this.sprite.scaleY = 0.1;
             this.sprite.angle +=10;
@@ -93,7 +94,7 @@ export class Sword extends Phaser.Physics.Arcade.Sprite
         else if(keys.down.isDown || lastKey == keys.down)
         {
             this.sprite.x = this.player.sprite.x;
-            this.sprite.y = this.player.sprite.y+10;
+            this.sprite.y = this.player.sprite.y+this.distanceFromPlayer;
             this.sprite.scaleX = 0.1;
             this.sprite.scaleY = -0.1;
             this.sprite.angle +=10;
