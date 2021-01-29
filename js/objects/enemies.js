@@ -15,7 +15,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite
     }
 
     freeze() {
-    this.sprite.body.moves = false;
+        this.sprite.body.moves = false;
     }
 
     update() {
