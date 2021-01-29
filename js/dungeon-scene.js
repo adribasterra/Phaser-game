@@ -4,7 +4,7 @@ import { BouncingEnemy } from "./objects/enemies.js";
 import { createPlayerAnims } from './animations/playerAnims.js'
 import { createEnemyAnims } from './animations/enemyAnims.js'
 import { createChestAnims } from './animations/chestAnims.js'
-import Chest from "./objects/chest.js";
+import Treasure from "./objects/chest.js";
 import Player from "./objects/player.js";
 import TILES from "./tile-mapping.js";
 import TilemapVisibility from "./tilemap-visibility.js";
@@ -17,11 +17,13 @@ export default class DungeonScene extends Phaser.Scene
     constructor() {
         super();
         this.level = 0;
+        this.score = 0;
     }
     preload() {
         this.load.image("tiles", "./assets/tilesets/buch-tileset-48px-extruded2.png");
         this.load.image("weapon", "./assets/weapon.png");
         this.load.image("pick", "./assets/pick.png");
+        this.load.image("chest", "./assets/chest.png");
         this.load.spritesheet(
             "characters",
             "./assets/character_set_1.png", //"./assets/spritesheets/buch-characters-64px-extruded.png"
@@ -39,6 +41,7 @@ export default class DungeonScene extends Phaser.Scene
         createChestAnims(this.anims);
         
         this.level++;
+
         this.hasPlayerReachedStairs = false;
     
         //#region Create map
@@ -145,26 +148,34 @@ export default class DungeonScene extends Phaser.Scene
         const x = map.tileToWorldX(playerRoom.centerX);
         const y = map.tileToWorldY(playerRoom.centerY);
         this.player = new Player(this, x, y);
+        
+        //this.physics.add.overlap(this.player.pick.sprite, this.chest.sprite, this.HandlerPlayerTresureCollision, undefined, this);
 
         // Place the stairs
         this.stuffLayer.putTileAt(TILES.STAIRS, endRoom.centerX, endRoom.centerY);
         // Place stuff in the 90% "otherRooms"
         otherRooms.forEach(room => {
+            room.trasures = [];
             var rand = Math.random();
             if (rand <= 0.25) {
                 // 25% chance of chest
-                this.stuffLayer.putTileAt(TILES.CHEST, room.centerX, room.centerY);
-                room.chests = [];
-                var chest = new Chest(this, room.centerX, room.centerY, TILES.CHEST);
-                this.physics.add.collider(this.player.sprite, chest.sprite, this.HandlePlayerChestCollision);
-                this.physics.add.collider(this.player.sword.sprite, chest.sprite, this.HandleWeaponEnemyCollision, undefined, this);
-                room.chests.push(chest);
+                //this.stuffLayer.putTileAt(TILES.CHEST, room.centerX, room.centerY);
+                const x = map.tileToWorldX(room.centerX);
+                const y = map.tileToWorldY(room.centerY);
+                var chest = new Treasure(this, x, y,0);
+                this.physics.add.collider(this.player.sprite, chest.sprite);
+                this.physics.add.overlap(this.player.pick.sprite, chest.sprite, this.HandlerPlayerTresureCollision, undefined, this);
+                room.trasures.push(chest);
             }
-            else if (rand <= 0.5) {
+            else if (rand <= 0.3) {
                 // 50% chance of a pot anywhere in the room... except don't block a door!
                 const x = Phaser.Math.Between(room.left + 2, room.right - 2);
                 const y = Phaser.Math.Between(room.top + 2, room.bottom - 2);
                 this.stuffLayer.weightedRandomize(x, y, 1, 1, TILES.POT);
+            }
+            else if (rand <= 0.5) {
+                // MINERALES
+                
             }
             else {
                 // 25% of either 2 or 4 towers, depending on the room size
@@ -208,7 +219,7 @@ export default class DungeonScene extends Phaser.Scene
                 room.enemies.push(enemy);
             }
         });
-    
+    console.log(this.trasures);
         // Not exactly correct for the tileset since there are more possible floor tiles, but this will
         // do for the example.
         this.groundLayer.setCollisionByExclusion([-1, 6, 63, 64, 65, 66]);
@@ -241,8 +252,8 @@ export default class DungeonScene extends Phaser.Scene
         camera.startFollow(this.player.sprite);
     
         // Help text that has a "fixed" position on the screen
-        this.add
-            .text(16, 16, `Find the stairs. Go deeper.\nCurrent level: ${this.level}`, {
+        this.scoreText = this.add
+            .text(16, 16, `Find the stairs. Go deeper.\nCurrent level: ${this.level}\nScore: ${this.score}`, {
                 font: "18px monospace",
                 fill: "#000000",
                 padding: { x: 20, y: 10 },
@@ -318,12 +329,18 @@ export default class DungeonScene extends Phaser.Scene
 
 	HandleWeaponEnemyCollision(enemy, weapon)
 	{
-		console.log("Col");
         //this.player.weapons.killAndHide(weapon);
         this.playerRoom.enemies[0].sprite.destroy();
         this.playerRoom.enemies = [];
 	}
-
+    HandlerPlayerTresureCollision(player, tresure)
+    {
+        //this.playerRoom.tresures[0].sprite.destroy();
+        //this.playerRoom.tresures = [];
+        this.score +=1000;
+        tresure.disableBody(true, true);
+        this.scoreText.setText(`Find the stairs. Go deeper.\nCurrent level: ${this.level}\nScore: ${this.score}`);
+    }
     HandlePlayerChestCollision(player, chest){
         //chest.open();
         this.player.update();
