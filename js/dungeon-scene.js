@@ -56,6 +56,7 @@ export default class DungeonScene extends Phaser.Scene
         else
         {
             this.gameOver = false;
+            this.score = 0;
         }
 
 
