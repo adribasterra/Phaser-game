@@ -93,10 +93,7 @@ Some utils need to be installed in order to use the software. This is how to ins
    ```sh
    npm install
    ```
-3. Run the project
-   ```sh
-   npm start
-   ```
+3. Open project with /index.html
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
